@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Olympic Sports Performance Analysis | Interactive Tableau Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN for Interactive Worksheet Explorer -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#0f172a',
+                            900: '#0b0f19',
+                            950: '#05070c'
+                        },
+                        gold: {
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0b0f19 70%);
+        }
+        .card-glass {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .active-tab-btn {
+            background: linear-gradient(135deg, #eab308 0%, #facc15 100%);
+            color: #05070c !important;
+            font-weight: 700;
+            box-shadow: 0 10px 25px -5px rgba(234, 179, 8, 0.35);
+        }
+        .active-sheet-card {
+            border-color: #eab308 !important;
+            background: rgba(234, 179, 8, 0.12) !important;
+            transform: translateY(-2px);
+        }
+        .node-pulse {
+            animation: pulse-ring 2.5s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(250, 204, 21, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #eab308; }
+    </style>
+</head>
+<body class="bg-navy-950 text-slate-100 antialiased selection:bg-gold-500 selection:text-navy-950">
+
+    <!-- Sticky Navigation Bar with Top-Right GitHub Repo Link -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-navy-900/90 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-gold-500 to-amber-300 flex items-center justify-center text-navy-950 font-extrabold text-xl shadow-lg shadow-gold-500/20 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-medal"></i>
+                </div>
+                <div>
+                    <span class="text-base sm:text-lg font-bold tracking-tight text-white block leading-none">Olympic Analytics</span>
+                    <span class="text-[11px] text-gold-400 font-medium tracking-wide">Tableau Public Interactive Project</span>
+                </div>
+            </a>
+
+            <!-- Center Navigation Links -->
+            <div class="hidden lg:flex items-center space-x-7 text-sm font-medium">
+                <a href="#tableau-viz" class="text-slate-300 hover:text-gold-400 transition-colors flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span>Live Tableau Dashboard</span>
+                </a>
+                <a href="#story-explorer" class="text-slate-300 hover:text-gold-400 transition-colors">Interactive 8-Sheet Story</a>
+                <a href="#architecture" class="text-slate-300 hover:text-gold-400 transition-colors">Data Model Visualizer</a>
+                <a href="#insights" class="text-slate-300 hover:text-gold-400 transition-colors">Key Findings</a>
+            </div>
+
+            <!-- Top-Right Action Button: Single Direct GitHub Repo Redirection Link ONLY -->
+            <div class="flex items-center">
+                <a href="https://github.com/olympic-sports-performance-analysis" target="_blank" rel="noopener noreferrer"
+                   class="px-4 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700 hover:border-gold-400/60 text-white hover:text-gold-400 font-semibold text-xs sm:text-sm flex items-center space-x-2 transition-all shadow-lg"
+                   title="Open GitHub Repository">
+                    <i class="fa-brands fa-github text-lg"></i>
+                    <span>GitHub Repo</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-75"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-16 lg:pt-36 lg:pb-24 hero-gradient overflow-hidden border-b border-slate-800">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#eab308_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-gold-400 text-xs font-semibold mb-6 shadow-inner">
+                <i class="fa-solid fa-trophy"></i>
+                <span>Live Connected to Tableau Public • 1992–2026 Olympic Cycles</span>
+            </div>
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight max-w-5xl mx-auto leading-tight">
+                Global Olympic Sports <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 via-amber-200 to-yellow-500">Performance Analysis</span>
+            </h1>
+            <p class="mt-5 text-base sm:text-lg text-slate-300 max-w-3xl mx-auto font-normal leading-relaxed">
+                Explore the live interactive Tableau Public workbook, step through all 8 validated worksheets in our Story Explorer, and inspect the multi-table relational schema connecting <code class="text-gold-400 bg-slate-800/80 px-1.5 py-0.5 rounded">Year = Year</code> and <code class="text-gold-400 bg-slate-800/80 px-1.5 py-0.5 rounded">Season = Season</code>.
+            </p>
+
+            <!-- Hero Interactive Quick-Jump Pills (Internal Anchors Only) -->
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+                <a href="#tableau-viz" class="px-6 py-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 font-bold text-sm transition-all shadow-lg shadow-gold-500/25 flex items-center gap-2">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Interact with Live Tableau Viz</span>
+                </a>
+                <a href="#story-explorer" class="px-6 py-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-white border border-slate-700 font-semibold text-sm transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Launch 8-Worksheet Interactive Story</span>
+                </a>
+                <a href="#architecture" class="px-5 py-3 rounded-xl bg-navy-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-sm transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-diagram-project text-gold-400"></i>
+                    <span>Inspect 4-CSV Data Model</span>
+                </a>
+            </div>
+
+            <!-- Animated KPI Counter Cards -->
+            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div onclick="document.getElementById('architecture').scrollIntoView({behavior:'smooth'})" class="cursor-pointer card-glass p-5 rounded-2xl border border-slate-700/60 hover:border-gold-400/60 transition-all shadow-xl group">
+                    <div class="text-3xl lg:text-4xl font-extrabold text-gold-400 group-hover:scale-105 transition-transform">4 CSVs</div>
+                    <div class="text-xs sm:text-sm text-slate-300 mt-1 font-semibold">Relational Datasets</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Composite Year & Season Link</div>
+                </div>
+                <div onclick="document.getElementById('story-explorer').scrollIntoView({behavior:'smooth'})" class="cursor-pointer card-glass p-5 rounded-2xl border border-slate-700/60 hover:border-gold-400/60 transition-all shadow-xl group">
+                    <div class="text-3xl lg:text-4xl font-extrabold text-gold-400 group-hover:scale-105 transition-transform">8 Sheets</div>
+                    <div class="text-xs sm:text-sm text-slate-300 mt-1 font-semibold">Validated Worksheets</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Click to explore interactively</div>
+                </div>
+                <div onclick="document.getElementById('tableau-viz').scrollIntoView({behavior:'smooth'})" class="cursor-pointer card-glass p-5 rounded-2xl border border-slate-700/60 hover:border-gold-400/60 transition-all shadow-xl group">
+                    <div class="text-3xl lg:text-4xl font-extrabold text-gold-400 group-hover:scale-105 transition-transform">2 + Story</div>
+                    <div class="text-xs sm:text-sm text-slate-300 mt-1 font-semibold">Dashboards & Story Flow</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Automatic Responsive Sizing</div>
+                </div>
+                <div onclick="selectWorksheet(1); document.getElementById('story-explorer').scrollIntoView({behavior:'smooth'})" class="cursor-pointer card-glass p-5 rounded-2xl border border-slate-700/60 hover:border-gold-400/60 transition-all shadow-xl group">
+                    <div class="text-3xl lg:text-4xl font-extrabold text-gold-400 group-hover:scale-105 transition-transform">275,059</div>
+                    <div class="text-xs sm:text-sm text-slate-300 mt-1 font-semibold">Total Sport Medal Marks</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">USA (735) & China (696) Lead</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-24">
+
+        <!-- 1. ZERO-LATENCY INTERACTIVE TABLEAU WORKBOOK & DASHBOARD SUITE -->
+        <section id="tableau-viz" class="scroll-mt-24">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-6 gap-4">
+                <div>
+                    <div class="inline-flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span>Interactive Tableau Public Workbook • Instant Render Mode</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                        Global Olympic Sports Performance Analysis
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1">
+                        Interact directly with the 2×2 executive dashboards, click any country or sport bar to cross-filter, or switch to the Live Tableau Server embed.
+                    </p>
+                </div>
+
+                <!-- Interactive View Switcher Tabs -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="switchMainWorkspace('dash1', this)"
+                            id="tabBtn-dash1"
+                            class="viz-tab-btn active-tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-table-columns"></i>
+                        <span>Dashboard 1: Olympic Overview</span>
+                    </button>
+                    <button onclick="switchMainWorkspace('dash2', this)"
+                            id="tabBtn-dash2"
+                            class="viz-tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-medal"></i>
+                        <span>Dashboard 2: Sports & Country</span>
+                    </button>
+                    <button onclick="switchMainWorkspace('liveEmbed', this)"
+                            id="tabBtn-liveEmbed"
+                            class="viz-tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-cloud"></i>
+                        <span>Live Tableau Server View</span>
+                    </button>
+                    <button onclick="resetDashboardFilters()"
+                            class="px-3 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-gold-400 border border-slate-700 transition-all flex items-center gap-1.5"
+                            title="Reset Cross-Filters">
+                        <i class="fa-solid fa-filter-circle-xmark"></i>
+                        <span class="hidden sm:inline">Reset Filter</span>
+                    </button>
+                    <button onclick="toggleFullscreenViz()"
+                            class="px-3 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all"
+                            title="Toggle Fullscreen Mode">
+                        <i class="fa-solid fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Interactive Tableau Canvas Wrapper -->
+            <div id="vizWrapperCard" class="card-glass rounded-3xl p-3 sm:p-5 shadow-2xl border border-slate-800 relative">
+                <!-- Interactive Status & Filter Bar -->
+                <div class="flex flex-wrap items-center justify-between px-4 py-2.5 mb-4 rounded-xl bg-navy-950/90 border border-slate-800/80 text-xs text-slate-400 gap-2">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-chart-line text-gold-400"></i>
+                        <span class="font-mono text-[11px] sm:text-xs text-slate-200 font-semibold" id="currentVizUrlLabel">
+                            Active View: Dashboard 1 - Olympic Overview (4 Validated Worksheets • Automatic Sizing)
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span id="activeFilterBadge" class="hidden px-2.5 py-0.5 rounded-full bg-gold-500/20 text-gold-400 border border-gold-500/40 font-semibold text-[11px]">
+                            Filter: All
+                        </span>
+                        <span class="text-emerald-400 flex items-center gap-1 font-medium">
+                            <i class="fa-solid fa-circle-check"></i> Interactive Tooltips & Cross-Highlight Ready
+                        </span>
+                    </div>
+                </div>
+
+                <!-- VIEW 1: DASHBOARD 1 - OLYMPIC OVERVIEW (2x2 TABLEAU CANVAS) -->
+                <div id="workspace-dash1" class="bg-white text-slate-900 rounded-2xl p-4 sm:p-6 shadow-inner">
+                    <div class="flex flex-wrap items-center justify-between border-b border-slate-200 pb-3 mb-5 gap-2">
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-extrabold text-slate-800 tracking-tight">Dashboard 1 - Olympic Overview</h3>
+                            <p class="text-xs text-slate-500">Click any Country bar or Year point to highlight across the overview • Automatic Responsive Layout</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200">
+                                Sheets 1–4
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Sheet 1: Medals Performance Over Time -->
+                        <div class="bg-slate-50/70 rounded-xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-base font-bold text-slate-800">Medals Performance Over Time</h4>
+                                <span class="text-[11px] font-mono text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">1992–2026</span>
+                            </div>
+                            <div class="relative w-full h-[270px]">
+                                <canvas id="dash1Sheet1Canvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Sheet 2: Top Countries by Total Medals -->
+                        <div class="bg-slate-50/70 rounded-xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-base font-bold text-slate-800">Top Countries by Total Medals</h4>
+                                <span class="text-[11px] font-mono text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">Sorted Descending</span>
+                            </div>
+                            <div class="relative w-full h-[270px]">
+                                <canvas id="dash1Sheet2Canvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Sheet 3: Medal Breakdown by Type -->
+                        <div class="bg-slate-50/70 rounded-xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-base font-bold text-slate-800">Medal Breakdown by Type</h4>
+                                <span class="text-[11px] font-mono text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">Total Gold | Total Silver | Total Bronze</span>
+                            </div>
+                            <div class="relative w-full h-[290px]">
+                                <canvas id="dash1Sheet3Canvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Sheet 4: Athlete Participation Trends -->
+                        <div class="bg-slate-50/70 rounded-xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-base font-bold text-slate-800">Athlete Participation Trends</h4>
+                                <span class="text-[11px] font-mono text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">CNT(athletes.csv)</span>
+                            </div>
+                            <div class="relative w-full h-[290px]">
+                                <canvas id="dash1Sheet4Canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: DASHBOARD 2 - SPORTS & COUNTRY INSIGHTS (2x2 TABLEAU CANVAS) -->
+                <div id="workspace-dash2" class="hidden bg-white text-slate-900 rounded-2xl p-4 sm:p-6 shadow-inner">
+                    <div class="flex flex-wrap items-center justify-between border-b border-slate-200 pb-3 mb-5 gap-2">
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-extrabold text-slate-800 tracking-tight">Dashboard 2 - Sports & Country Insights</h3>
+                            <p class="text-xs text-slate-500">Comparing sport medal volume, host nation advantages, national efficiency, and gold medal sports</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200">
+                                Sheets 5–8
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Sheet 5: Top Sports by Medals -->
+                        <div class="bg-slate-50/70 rounded-xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-base font-bold text-slate-800">Top Sports by Medals</h4>
+                                <span class="text-[11px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">SUM(Total Medals)</span>
+                            </div>
+                            <div class="relative w-full h-[280px]">
+                                <canvas id="dash2Sheet5Canvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Sheet 6: Host Country Performance -->
+                        <div class="bg-slate-50/70 rounded-xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-base font-bold text-slate-800">Host Country Performance</h4>
+                                <span class="text-[11px] font-mono text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">CNT(medal_results.csv)</span>
+                            </div>
+                            <div class="relative w-full h-[280px]">
+                                <canvas id="dash2Sheet6Canvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Sheet 7: Medal Efficiency by Country -->
+                        <div class="bg-slate-50/70 rounded-xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-base font-bold text-slate-800">Medal Efficiency by Country</h4>
+                                <span class="text-[11px] font-mono text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">SUM(Medal Efficiency Pct)</span>
+                            </div>
+                            <div class="relative w-full h-[290px]">
+                                <canvas id="dash2Sheet7Canvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Sheet 8: Top Sports by Gold Medals -->
+                        <div class="bg-slate-50/70 rounded-xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-base font-bold text-slate-800">Top Sports by Gold Medals</h4>
+                                <span class="text-[11px] font-mono text-slate-700 bg-slate-200/70 px-2 py-0.5 rounded border border-slate-300">SUM(Total Gold)</span>
+                            </div>
+                            <div class="relative w-full h-[290px]">
+                                <canvas id="dash2Sheet8Canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: UNBLOCKED LIVE TABLEAU PUBLIC SERVER EMBED -->
+                <div id="workspace-liveEmbed" class="hidden w-full rounded-2xl overflow-hidden bg-white relative" style="min-height: 820px;">
+                    <div class="bg-slate-900 text-slate-200 px-4 py-2.5 text-xs flex flex-wrap items-center justify-between gap-2 border-b border-slate-800">
+                        <span><i class="fa-solid fa-cloud-arrow-down text-gold-400 mr-1.5"></i>Live Tableau Public Cloud Frame (<code class="text-gold-400">GlobalOlympicSportsPerformanceAnalysis_17931934959440</code>)</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="switchIframeSubView('Dashboard1-OlympicOverview')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white border border-slate-700">Dashboard 1</button>
+                            <button onclick="switchIframeSubView('Dashboard2-SportsCountryInsights')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white border border-slate-700">Dashboard 2</button>
+                        </div>
+                    </div>
+                    <iframe id="tableauIframe"
+                            src="https://public.tableau.com/views/GlobalOlympicSportsPerformanceAnalysis_17931934959440/Dashboard1-OlympicOverview?:showVizHome=no&:embed=true&:tabs=yes&:toolbar=yes"
+                            class="w-full h-[800px] border-0"
+                            allowfullscreen
+                            title="Global Olympic Sports Performance Analysis Live Tableau Dashboard">
+                    </iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. INTERACTIVE 8-WORKSHEET & STORY EXPLORER (REPLICA OF USER'S TABLEAU SHEETS) -->
+        <section id="story-explorer" class="scroll-mt-24">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-gold-400 text-xs font-bold uppercase tracking-wider block">Step-by-Step Interactive Story Walkthrough</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
+                        Interactive Worksheet & Story Explorer (All 8 Sheets)
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1 max-w-2xl">
+                        Since we structured our Tableau Story around individual worksheets for a detailed walkthrough, click any of the 8 sheets below (or use Next/Previous Story Point) to interactively filter, sort, and inspect the exact figures from your workbook.
+                    </p>
+                </div>
+
+                <!-- Story Navigation Controls -->
+                <div class="flex items-center space-x-2 shrink-0">
+                    <button onclick="prevWorksheet()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>Prev Sheet</span>
+                    </button>
+                    <span id="storyStepBadge" class="px-3.5 py-2 rounded-xl bg-navy-900 border border-slate-800 text-gold-400 font-bold text-xs">
+                        Story Point 1 / 8
+                    </span>
+                    <button onclick="nextWorksheet()" class="px-4 py-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg shadow-gold-500/20">
+                        <span>Next Sheet</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 8 Worksheet Selector Pills -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 mb-6" id="sheetTabsGrid">
+                <!-- Populated dynamically by JS -->
+            </div>
+
+            <!-- Interactive Chart Stage + Metadata Side Panel -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left 2 Columns: Interactive Chart Canvas -->
+                <div class="lg:col-span-2 card-glass rounded-3xl p-6 border border-slate-800 shadow-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span id="activeSheetBadge" class="px-2.5 py-0.5 rounded-md bg-gold-500/15 text-gold-400 text-xs font-bold border border-gold-500/30">
+                                        Sheet 1
+                                    </span>
+                                    <span id="activeSheetDashboardTag" class="text-xs text-slate-400 font-medium">
+                                        • Included in Dashboard 1 - Olympic Overview
+                                    </span>
+                                </div>
+                                <h3 id="activeSheetTitle" class="text-xl sm:text-2xl font-extrabold text-white mt-1">
+                                    Medals Performance Over Time
+                                </h3>
+                            </div>
+
+                            <!-- Interactive Controls for the Current Chart -->
+                            <div class="flex items-center space-x-2" id="chartFilterControls">
+                                <select id="limitFilterSelect" onchange="changeDataLimit(this.value)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 focus:outline-none focus:border-gold-400 transition-all">
+                                    <option value="all">Show All Data Points</option>
+                                    <option value="5">Filter: Top / First 5</option>
+                                    <option value="10">Filter: Top / First 10</option>
+                                </select>
+                                <button onclick="toggleChartSort()" id="sortBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-all flex items-center gap-1.5">
+                                    <i class="fa-solid fa-arrow-down-wide-short text-gold-400"></i>
+                                    <span>Toggle Sort</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tableau Pills Replica (Columns & Rows Shelf) -->
+                        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                            <div class="flex items-center space-x-2 bg-navy-950/80 px-3 py-2 rounded-xl border border-slate-800/80">
+                                <span class="text-slate-400 font-semibold w-16"><i class="fa-solid fa-grip-lines-vertical mr-1"></i>Columns:</span>
+                                <span id="shelfColumns" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
+                                    Year
+                                </span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-navy-950/80 px-3 py-2 rounded-xl border border-slate-800/80">
+                                <span class="text-slate-400 font-semibold w-16"><i class="fa-solid fa-grip-lines mr-1"></i>Rows:</span>
+                                <span id="shelfRows" class="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 font-semibold">
+                                    SUM(Total Medals)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart.js Canvas Container -->
+                    <div class="relative w-full h-[360px] sm:h-[400px] mt-6">
+                        <canvas id="worksheetChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Right Column: Story Insights & Verified Dataset Figures -->
+                <div class="card-glass rounded-3xl p-6 border border-slate-800 shadow-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 text-gold-400 text-xs font-bold uppercase tracking-wider">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>Story Point Analysis</span>
+                        </div>
+                        <h4 id="storyCaptionTitle" class="text-lg font-bold text-white mt-2">
+                            Historical Medal Trajectory (1992–2026)
+                        </h4>
+                        <p id="storyDescription" class="text-slate-300 text-sm mt-3 leading-relaxed">
+                            Tracks total medals awarded across Olympic cycles from 1992 to 2026 using medal_results.csv.
+                        </p>
+
+                        <!-- Key Data Highlights Box -->
+                        <div class="mt-6 p-4 rounded-2xl bg-navy-950/90 border border-slate-800 space-y-3">
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                Verified Tableau Metrics
+                            </div>
+                            <div id="sheetMetricsList" class="space-y-2.5 text-xs">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Source CSV Info -->
+                    <div class="mt-6 pt-4 border-t border-slate-800">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-slate-400">Primary Source Table:</span>
+                            <span id="sheetSourceTable" class="font-mono text-gold-400 font-semibold">medal_results.csv</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs mt-2">
+                            <span class="text-slate-400">Chart Type:</span>
+                            <span id="sheetChartType" class="text-slate-200 font-medium">Line Chart with Labels</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. INTERACTIVE DATA MODEL & RELATIONSHIPS VISUALIZER -->
+        <section id="architecture" class="scroll-mt-24">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="text-gold-400 text-xs font-bold uppercase tracking-wider">Interactive Tableau Data Source Canvas</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
+                    Relational Data Model & Composite Join Inspector
+                </h2>
+                <p class="text-slate-400 mt-2 text-sm">
+                    Click on any of the 4 dataset nodes below to inspect its fields, relationship operators, and the composite <code class="text-gold-400">Year = Year</code> & <code class="text-gold-400">Season = Season</code> connection.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+                <!-- Interactive Relationship Canvas Replica (Left 2 Cols) -->
+                <div class="lg:col-span-2 card-glass rounded-3xl p-6 sm:p-8 border border-slate-800 flex flex-col justify-between">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-database text-gold-400"></i>
+                            <span class="font-bold text-sm text-white">alltime_country_rankings+ (Tableau Logical Layer)</span>
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-medium">
+                            All 4 Tables Validated
+                        </span>
+                    </div>
+
+                    <!-- Interactive Nodes Diagram -->
+                    <div class="my-auto py-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                            <!-- Node 1: alltime_country_rankings.csv -->
+                            <div onclick="inspectTable('rankings')" id="node-rankings"
+                                 class="cursor-pointer p-4 rounded-2xl bg-navy-900 border-2 border-gold-400 shadow-lg transition-all hover:scale-105">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-gold-400 uppercase">Root Table</span>
+                                    <i class="fa-solid fa-trophy text-gold-400"></i>
+                                </div>
+                                <div class="font-mono text-xs sm:text-sm font-bold text-white truncate">alltime_country_rankings.csv</div>
+                                <div class="text-[11px] text-slate-400 mt-2">Key: <span class="text-slate-200 font-semibold">Country = Country</span></div>
+                            </div>
+
+                            <!-- Center Hub Node: medal_results.csv -->
+                            <div onclick="inspectTable('medals')" id="node-medals"
+                                 class="cursor-pointer p-4 rounded-2xl bg-sky-950/80 border-2 border-sky-400 shadow-lg transition-all hover:scale-105 relative">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-sky-300 uppercase">Central Fact Table</span>
+                                    <i class="fa-solid fa-medal text-sky-300"></i>
+                                </div>
+                                <div class="font-mono text-xs sm:text-sm font-bold text-white truncate">medal_results.csv</div>
+                                <div class="text-[11px] text-sky-200 mt-2">Links Rankings, Athletes & Games</div>
+                            </div>
+
+                            <!-- Right Stacked Nodes: athletes.csv & games_summary.csv -->
+                            <div class="space-y-4">
+                                <div onclick="inspectTable('athletes')" id="node-athletes"
+                                     class="cursor-pointer p-4 rounded-2xl bg-navy-900 border-2 border-slate-700 hover:border-gold-400 shadow-lg transition-all hover:scale-105">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-[11px] font-bold text-purple-400 uppercase">Demographics</span>
+                                        <i class="fa-solid fa-users text-purple-400 text-xs"></i>
+                                    </div>
+                                    <div class="font-mono text-xs sm:text-sm font-bold text-white truncate">athletes.csv</div>
+                                    <div class="text-[11px] text-slate-400 mt-1">Key: <span class="text-slate-200">Noc Code = Noc Code</span></div>
+                                </div>
+
+                                <div onclick="inspectTable('games')" id="node-games"
+                                     class="cursor-pointer p-4 rounded-2xl bg-navy-900 border-2 border-emerald-500/70 hover:border-emerald-400 shadow-lg transition-all hover:scale-105 node-pulse">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-[11px] font-bold text-emerald-400 uppercase">Composite Link</span>
+                                        <i class="fa-solid fa-link text-emerald-400 text-xs"></i>
+                                    </div>
+                                    <div class="font-mono text-xs sm:text-sm font-bold text-white truncate">games_summary.csv</div>
+                                    <div class="text-[11px] text-emerald-300 mt-1 font-semibold">Year = Year AND Season = Season</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Relationship Clause Bar (Matches Screenshot 1) -->
+                    <div class="mt-6 p-4 rounded-2xl bg-navy-950 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-code-merge text-gold-400"></i>
+                                <span id="relTitle">Active Relationship Clause: medal_results.csv — games_summary.csv</span>
+                            </div>
+                            <p id="relExplanation" class="text-xs text-slate-400 mt-1">
+                                Uses a multi-field composite relationship so Summer and Winter Olympic cycles in the same era never cross-multiply.
+                            </p>
+                        </div>
+                        <div id="relPills" class="flex flex-wrap gap-2 shrink-0">
+                            <span class="px-3 py-1 rounded-lg bg-slate-800 text-gold-400 font-mono text-xs border border-slate-700">Year = Year</span>
+                            <span class="px-3 py-1 rounded-lg bg-slate-800 text-emerald-400 font-mono text-xs border border-slate-700">Season = Season</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Selected Table Schema & Sample Fields -->
+                <div class="card-glass rounded-3xl p-6 border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-gold-400 uppercase tracking-wider">Table Schema Inspector</span>
+                        <h3 id="schemaTableName" class="text-xl font-bold text-white font-mono mt-1">games_summary.csv</h3>
+                        <p id="schemaTableDesc" class="text-xs text-slate-400 mt-2 leading-relaxed">
+                            Contains historical metadata for each Olympic game cycle including participating nations, total athletes, and total medals awarded.
+                        </p>
+
+                        <div class="mt-5">
+                            <div class="text-xs font-semibold text-slate-300 mb-2.5">Dimensions & Measures in Tableau:</div>
+                            <div id="schemaFieldsList" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+                                <!-- Dynamically populated -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+                        <span>Relationship Type:</span>
+                        <span class="text-emerald-400 font-semibold">Many-to-Many Logical Noodle</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. KEY INSIGHTS & EXECUTIVE DASHBOARD SUMMARY -->
+        <section id="insights" class="scroll-mt-24">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="text-gold-400 text-xs font-bold uppercase tracking-wider block">Analytical Findings</span>
+                    <h2 class="text-3xl font-extrabold text-white tracking-tight mt-1">Key Insights from Our 8 Worksheets</h2>
+                    <p class="text-slate-400 mt-3 text-sm leading-relaxed">
+                        Every chart was validated step-by-step in Tableau Public to uncover macro and micro patterns in Olympic sports performance:
+                    </p>
+
+                    <div class="mt-7 space-y-5">
+                        <div class="flex items-start space-x-4 p-4 rounded-2xl bg-navy-900/60 border border-slate-800/80">
+                            <div class="w-10 h-10 rounded-xl bg-gold-500/15 text-gold-400 flex items-center justify-center shrink-0 font-bold">1</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Country Dominance & Medal Breakdown</h4>
+                                <p class="text-slate-400 text-xs mt-1 leading-relaxed">
+                                    <strong>United States (735 total medals: 250 Gold, 208 Silver, 277 Bronze)</strong> and <strong>China (696 total medals: 230 Gold, 230 Silver, 236 Bronze)</strong> lead overall standings, followed by Russia (429) and Great Britain (401).
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 p-4 rounded-2xl bg-navy-900/60 border border-slate-800/80">
+                            <div class="w-10 h-10 rounded-xl bg-gold-500/15 text-gold-400 flex items-center justify-center shrink-0 font-bold">2</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Top Sports by Total & Gold Medals</h4>
+                                <p class="text-slate-400 text-xs mt-1 leading-relaxed">
+                                    <strong>Skateboarding, Gymnastics, and Fencing</strong> top both overall medal volume (<strong>6,025 each</strong>) and Gold medal counts (<strong>1,959 Golds each</strong>), closely followed by Judo, Weightlifting, and Volleyball.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 p-4 rounded-2xl bg-navy-900/60 border border-slate-800/80">
+                            <div class="w-10 h-10 rounded-xl bg-gold-500/15 text-gold-400 flex items-center justify-center shrink-0 font-bold">3</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Host Country Advantage & Medal Efficiency</h4>
+                                <p class="text-slate-400 text-xs mt-1 leading-relaxed">
+                                    <strong>Japan (105)</strong>, <strong>United States (100)</strong>, <strong>China (98)</strong>, and <strong>Italy (93)</strong> record the highest host country performance counts, while <strong>Iran (1,032.1)</strong>, <strong>Latvia (1,015.4)</strong>, and <strong>Poland (986.3)</strong> top cumulative Medal Efficiency Pct.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard & Story Architecture Cards -->
+                <div class="card-glass p-7 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
+                    <h3 class="text-xl font-bold text-white mb-2 flex items-center space-x-3">
+                        <i class="fa-solid fa-layer-group text-gold-400"></i>
+                        <span>Project Architecture Summary</span>
+                    </h3>
+
+                    <div class="p-4 rounded-2xl bg-navy-900/90 border border-slate-800 hover:border-gold-500/40 transition-all">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-gold-400 text-sm">Dashboard 1 - Olympic Overview</span>
+                            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Automatic Sizing</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mt-1.5">
+                            Consolidates Sheets 1–4: <em>Medals Performance Over Time</em>, <em>Top Countries by Total Medals</em>, <em>Medal Breakdown by Type</em>, and <em>Athlete Participation Trends</em> (peaking at 8,000 athletes in 2020).
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-navy-900/90 border border-slate-800 hover:border-gold-500/40 transition-all">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-gold-400 text-sm">Dashboard 2 - Sports & Country Insights</span>
+                            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Automatic Sizing</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mt-1.5">
+                            Consolidates Sheets 5–8: <em>Top Sports by Medals</em>, <em>Host Country Performance</em>, <em>Medal Efficiency by Country</em>, and <em>Top Sports by Gold Medals</em>.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-navy-900/90 border border-slate-800 hover:border-gold-500/40 transition-all">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-emerald-400 text-sm">Worksheet-Driven Story Presentation</span>
+                            <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300">8 Story Points</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mt-1.5">
+                            Uses individual worksheets inside the Tableau Story to provide a granular, step-by-step narrative walkthrough alongside the two executive dashboards.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-navy-900 border-t border-slate-800 mt-20 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-gold-500 to-amber-300 flex items-center justify-center text-navy-950 font-extrabold text-sm shadow">
+                    <i class="fa-solid fa-medal"></i>
+                </div>
+                <span class="text-sm font-bold text-white">Global Olympic Sports Performance Analysis</span>
+            </div>
+
+            <p class="text-xs text-slate-400 text-center">
+                Interactive Tableau Public Portfolio • Built with Tailwind CSS & Chart.js
+            </p>
+
+            <div class="flex items-center space-x-4 text-slate-300 text-sm">
+                <a href="https://github.com/olympic-sports-performance-analysis"
+                   target="_blank" rel="noopener noreferrer"
+                   class="hover:text-gold-400 transition-colors flex items-center gap-1.5 text-xs font-semibold">
+                    <i class="fa-brands fa-github text-base"></i>
+                    <span>GitHub Repo</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Application JavaScript -->
+    <script>
+        // ============================================================================
+        // 1. MULTI-DASHBOARD WORKSPACE & LIVE TABLEAU CONTROLLER (NO BLOCKING OVERLAY)
+        // ============================================================================
+        const TABLEAU_BASE = "https://public.tableau.com/views/GlobalOlympicSportsPerformanceAnalysis_17931934959440/";
+        let dash1Charts = {};
+        let dash2Charts = {};
+        let dash2Initialized = false;
+
+        function switchMainWorkspace(mode, btnEl) {
+            const dash1El = document.getElementById('workspace-dash1');
+            const dash2El = document.getElementById('workspace-dash2');
+            const liveEl = document.getElementById('workspace-liveEmbed');
+            const urlLabel = document.getElementById('currentVizUrlLabel');
+
+            dash1El.classList.add('hidden');
+            dash2El.classList.add('hidden');
+            liveEl.classList.add('hidden');
+
+            document.querySelectorAll('.viz-tab-btn').forEach(btn => btn.classList.remove('active-tab-btn'));
+            if (btnEl) btnEl.classList.add('active-tab-btn');
+
+            if (mode === 'dash1') {
+                dash1El.classList.remove('hidden');
+                urlLabel.textContent = "Active View: Dashboard 1 - Olympic Overview (4 Validated Worksheets • Automatic Sizing)";
+            } else if (mode === 'dash2') {
+                dash2El.classList.remove('hidden');
+                urlLabel.textContent = "Active View: Dashboard 2 - Sports & Country Insights (4 Validated Worksheets • Automatic Sizing)";
+                if (!dash2Initialized) {
+                    initDashboard2Charts();
+                    dash2Initialized = true;
+                }
+            } else if (mode === 'liveEmbed') {
+                liveEl.classList.remove('hidden');
+                urlLabel.textContent = "Active View: Live Tableau Public Server Stream (GlobalOlympicSportsPerformanceAnalysis_17931934959440)";
+            }
+        }
+
+        function switchIframeSubView(sheetSlug) {
+            const iframe = document.getElementById('tableauIframe');
+            if (iframe) {
+                iframe.src = `${TABLEAU_BASE}${sheetSlug}?:showVizHome=no&:embed=true&:tabs=yes&:toolbar=yes`;
+            }
+        }
+
+        function toggleFullscreenViz() {
+            const card = document.getElementById('vizWrapperCard');
+            if (!document.fullscreenElement) {
+                if (card.requestFullscreen) card.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        // ============================================================================
+        // 2. EXACT 2x2 TABLEAU DASHBOARD 1 & DASHBOARD 2 CHARTS ENGINE
+        // ============================================================================
+        function initDashboard1Charts() {
+            // Sheet 1: Medals Performance Over Time (Orange Tableau Line with Labels)
+            const ctx1 = document.getElementById('dash1Sheet1Canvas').getContext('2d');
+            dash1Charts.s1 = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['1992', '1994', '1996', '1998', '2000', '2002', '2004', '2006', '2008', '2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024', '2026'],
+                    datasets: [{
+                        label: 'SUM(Total Medals)',
+                        data: [329, 340, 326, 328, 305, 342, 348, 313, 357, 339, 324, 342, 358, 332, 363, 326, 319, 334],
+                        borderColor: '#f28e2b',
+                        backgroundColor: 'rgba(242, 142, 43, 0.12)',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#f28e2b',
+                        pointRadius: 3.5,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', titleColor: '#facc15', bodyColor: '#fff' }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#f1f5f9' } },
+                        y: { min: 0, max: 400, ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#e2e8f0' }, title: { display: true, text: 'Total Medals (Medal Results.Csv)', color: '#475569', font: { size: 10, weight: 'bold' } } }
+                    }
+                }
+            });
+
+            // Sheet 2: Top Countries by Total Medals (Tableau Steel Blue Bars)
+            const ctx2 = document.getElementById('dash1Sheet2Canvas').getContext('2d');
+            const s2Countries = ['United States', 'China', 'Russia', 'Great Britain', 'Germany', 'Japan', 'Australia', 'France', 'Italy', 'South Korea', 'Canada', 'Hungary', 'Netherlands', 'Norway'];
+            const s2Medals = [735, 696, 429, 401, 336, 308, 280, 260, 198, 190, 158, 152, 150, 131];
+            dash1Charts.s2 = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: s2Countries,
+                    datasets: [{
+                        label: 'Total Medals',
+                        data: s2Medals,
+                        backgroundColor: '#4e79a7',
+                        borderRadius: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const idx = elements[0].index;
+                            applyCountryCrossFilter(s2Countries[idx]);
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', titleColor: '#facc15', bodyColor: '#fff' }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#e2e8f0' }, title: { display: true, text: 'Total Medals', color: '#475569', font: { size: 10, weight: 'bold' } } },
+                        y: { ticks: { color: '#1e293b', font: { size: 10 } }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // Sheet 3: Medal Breakdown by Type (Gold, Silver, Bronze by Country)
+            const ctx3 = document.getElementById('dash1Sheet3Canvas').getContext('2d');
+            const s3Countries = ['United States', 'China', 'Russia', 'Great Britain', 'Germany', 'Australia', 'Japan', 'France', 'Netherlands', 'Canada', 'Italy', 'South Korea', 'Hungary'];
+            dash1Charts.s3 = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: s3Countries,
+                    datasets: [
+                        { label: 'Total Gold', data: [250, 230, 130, 120, 116, 101, 98, 86, 63, 60, 59, 58, 48], backgroundColor: '#79706e' },
+                        { label: 'Total Silver', data: [208, 230, 150, 138, 103, 89, 101, 88, 51, 42, 64, 56, 51], backgroundColor: '#9c9290' },
+                        { label: 'Total Bronze', data: [277, 236, 149, 143, 117, 90, 109, 86, 36, 56, 75, 76, 53], backgroundColor: '#bab0ac' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#334155', font: { size: 10 }, boxWidth: 10 } },
+                        tooltip: { backgroundColor: '#1e293b', titleColor: '#facc15', bodyColor: '#fff' }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#e2e8f0' } },
+                        y: { ticks: { color: '#1e293b', font: { size: 10 } }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // Sheet 4: Athlete Participation Trends (Tableau Blue Sawtooth Line)
+            const ctx4 = document.getElementById('dash1Sheet4Canvas').getContext('2d');
+            dash1Charts.s4 = new Chart(ctx4, {
+                type: 'line',
+                data: {
+                    labels: ['1992', '1994', '1996', '1998', '2000', '2002', '2004', '2006', '2008', '2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024', '2026'],
+                    datasets: [{
+                        label: 'Count of athletes.csv',
+                        data: [7423, 6283, 7064, 5966, 7340, 6271, 7161, 6142, 7453, 6276, 7464, 5838, 7723, 5842, 8000, 5741, 6950, 6276],
+                        borderColor: '#4e79a7',
+                        backgroundColor: 'rgba(78, 121, 167, 0.1)',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#4e79a7',
+                        pointRadius: 3.5,
+                        tension: 0.05
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', titleColor: '#facc15', bodyColor: '#fff' }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#f1f5f9' }, title: { display: true, text: 'Year (Games Summary.Csv)', color: '#475569', font: { size: 10, weight: 'bold' } } },
+                        y: { min: 0, max: 8500, ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#e2e8f0' }, title: { display: true, text: 'Count of athletes.csv', color: '#475569', font: { size: 10, weight: 'bold' } } }
+                    }
+                }
+            });
+        }
+
+        function initDashboard2Charts() {
+            // Sheet 5: Top Sports by Medals (Tableau Green Horizontal Bars)
+            const ctx5 = document.getElementById('dash2Sheet5Canvas').getContext('2d');
+            dash2Charts.s5 = new Chart(ctx5, {
+                type: 'bar',
+                data: {
+                    labels: ['Skateboarding', 'Gymnastics', 'Fencing', 'Taekwondo', 'Volleyball', 'Judo', 'Ice Hockey', 'Weightlifting', 'Badminton', 'Diving', 'Tennis', 'Triathlon', 'Breakdancing', 'Pentathlon'],
+                    datasets: [{
+                        label: 'Total Medals',
+                        data: [6025, 6025, 6025, 6001, 5984, 5980, 5976, 5960, 5947, 5935, 5927, 5920, 5913, 5900],
+                        backgroundColor: '#59a14f',
+                        borderRadius: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { min: 0, max: 6500, ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#e2e8f0' } },
+                        y: { ticks: { color: '#1e293b', font: { size: 10 } }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // Sheet 6: Host Country Performance (Tableau Blue Horizontal Bars)
+            const ctx6 = document.getElementById('dash2Sheet6Canvas').getContext('2d');
+            dash2Charts.s6 = new Chart(ctx6, {
+                type: 'bar',
+                data: {
+                    labels: ['Japan', 'United States', 'China', 'Italy', 'Brazil', 'United Kingdom', 'Spain', 'Australia', 'Greece', 'France', 'Norway', 'Canada', 'South Korea', 'Russia'],
+                    datasets: [{
+                        label: 'Count of medal_results.csv',
+                        data: [105, 100, 98, 93, 58, 56, 56, 55, 54, 52, 47, 47, 44, 44],
+                        backgroundColor: '#4e79a7',
+                        borderRadius: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { min: 0, max: 115, ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#e2e8f0' } },
+                        y: { ticks: { color: '#1e293b', font: { size: 10 } }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // Sheet 7: Medal Efficiency by Country (Tableau Coral/Pink Horizontal Bars)
+            const ctx7 = document.getElementById('dash2Sheet7Canvas').getContext('2d');
+            dash2Charts.s7 = new Chart(ctx7, {
+                type: 'bar',
+                data: {
+                    labels: ['Iran', 'Latvia', 'Poland', 'Philippines', 'Morocco', 'Turkey', 'Finland', 'Austria', 'Mexico', 'Czech Republic', 'Croatia', 'Bahrain', 'Estonia', 'South Africa'],
+                    datasets: [{
+                        label: 'Medal Efficiency Pct',
+                        data: [1032.1, 1012.5, 986.3, 979.0, 973.3, 958.0, 945.3, 891.8, 883.8, 791.8, 758.5, 758.2, 745.0, 737.2],
+                        backgroundColor: '#ff9da7',
+                        borderRadius: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { min: 0, max: 1100, ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#e2e8f0' } },
+                        y: { ticks: { color: '#1e293b', font: { size: 10 } }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // Sheet 8: Top Sports by Gold Medals (Tableau Neutral Grey Horizontal Bars)
+            const ctx8 = document.getElementById('dash2Sheet8Canvas').getContext('2d');
+            dash2Charts.s8 = new Chart(ctx8, {
+                type: 'bar',
+                data: {
+                    labels: ['Skateboarding', 'Gymnastics', 'Fencing', 'Judo', 'Weightlifting', 'Taekwondo', 'Volleyball', 'Ice Hockey', 'Tennis', 'Diving', 'Badminton', 'Triathlon', 'Breakdancing', 'Pentathlon'],
+                    datasets: [{
+                        label: 'Total Gold',
+                        data: [1959, 1959, 1959, 1950, 1945, 1944, 1943, 1936, 1930, 1929, 1928, 1925, 1923, 1918],
+                        backgroundColor: '#9c9b98',
+                        borderRadius: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { min: 0, max: 2100, ticks: { color: '#475569', font: { size: 10 } }, grid: { color: '#e2e8f0' } },
+                        y: { ticks: { color: '#1e293b', font: { size: 10 } }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function applyCountryCrossFilter(countryName) {
+            const badge = document.getElementById('activeFilterBadge');
+            badge.classList.remove('hidden');
+            badge.textContent = `Filtered Country: ${countryName}`;
+
+            if (dash1Charts.s2) {
+                dash1Charts.s2.data.datasets[0].backgroundColor = dash1Charts.s2.data.labels.map(c =>
+                    c === countryName ? '#eab308' : 'rgba(78, 121, 167, 0.35)'
+                );
+                dash1Charts.s2.update();
+            }
+        }
+
+        function resetDashboardFilters() {
+            const badge = document.getElementById('activeFilterBadge');
+            badge.classList.add('hidden');
+            if (dash1Charts.s2) {
+                dash1Charts.s2.data.datasets[0].backgroundColor = '#4e79a7';
+                dash1Charts.s2.update();
+            }
+        }
+
+        // ============================================================================
+        // 3. INTERACTIVE 8-WORKSHEET & STORY EXPLORER DATA (EXACT PROJECT NUMBERS)
+        // ============================================================================
+        const WORKSHEETS = [
+            {
+                id: 0,
+                shortTitle: "1. Medals Over Time",
+                title: "Medals Performance Over Time",
+                dashboard: "Dashboard 1 - Olympic Overview",
+                columns: "Year",
+                rows: "SUM(Total Medals (Medal Results.Csv))",
+                sourceTable: "medal_results.csv",
+                chartType: "Line Chart (Continuous Year)",
+                caption: "Macro Medal Trajectory Across Olympic Cycles (1992–2026)",
+                description: "Tracks the total volume of Olympic medals awarded every two years across both Summer and Winter games. Peaks occur in 2020 (363 medals), 2016 (358 medals), and 2008 (357 medals).",
+                metrics: [
+                    { label: "Peak Medal Cycle", value: "2020 (363 Medals)" },
+                    { label: "2016 & 2008 Cycles", value: "358 & 357 Medals" },
+                    { label: "2026 Latest Cycle", value: "334 Medals" }
+                ],
+                type: 'line',
+                labels: ['1992', '1994', '1996', '1998', '2000', '2002', '2004', '2006', '2008', '2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024', '2026'],
+                datasets: [{
+                    label: 'Total Medals Awarded',
+                    data: [329, 340, 326, 328, 305, 342, 348, 313, 357, 339, 324, 342, 358, 332, 363, 326, 319, 334],
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.18)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#facc15',
+                    pointRadius: 5,
+                    fill: true,
+                    tension: 0.25
+                }]
+            },
+            {
+                id: 1,
+                shortTitle: "2. Top Countries",
+                title: "Top Countries by Total Medals",
+                dashboard: "Dashboard 1 - Olympic Overview",
+                columns: "SUM(Total Medals)",
+                rows: "Country",
+                sourceTable: "alltime_country_rankings.csv",
+                chartType: "Horizontal Bar Chart (Sorted Descending)",
+                caption: "Global Superpowers in All-Time Medal Standings",
+                description: "Ranks nations in descending order of cumulative Olympic medals. The United States (735) and China (696) hold a commanding lead over Russia (429) and Great Britain (401).",
+                metrics: [
+                    { label: "#1 United States", value: "735 Total Medals" },
+                    { label: "#2 China", value: "696 Total Medals" },
+                    { label: "#3 Russia & #4 Great Britain", value: "429 & 401 Medals" }
+                ],
+                type: 'bar',
+                indexAxis: 'y',
+                labels: ['United States', 'China', 'Russia', 'Great Britain', 'Germany', 'Japan', 'Australia', 'France', 'Italy', 'South Korea', 'Canada', 'Hungary', 'Netherlands', 'Norway'],
+                datasets: [{
+                    label: 'Total Medals',
+                    data: [735, 696, 429, 401, 336, 308, 280, 260, 198, 190, 158, 152, 150, 131],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 6
+                }]
+            },
+            {
+                id: 2,
+                shortTitle: "3. Medal Breakdown",
+                title: "Medal Breakdown by Type",
+                dashboard: "Dashboard 1 - Olympic Overview",
+                columns: "SUM(Total Gold) | SUM(Total Silver) | SUM(Total Bronze)",
+                rows: "Country",
+                sourceTable: "alltime_country_rankings.csv",
+                chartType: "Multi-Measure Grouped Horizontal Bar Chart",
+                caption: "Gold, Silver & Bronze Podium Composition by Country",
+                description: "Compares how top nations convert podium finishes across Gold, Silver, and Bronze tiers. The USA leads in Gold (250) and Bronze (277), while China leads in Silver (230).",
+                metrics: [
+                    { label: "United States Split", value: "250 Gold | 208 Silver | 277 Bronze" },
+                    { label: "China Split", value: "230 Gold | 230 Silver | 236 Bronze" },
+                    { label: "Russia Split", value: "130 Gold | 150 Silver | 149 Bronze" }
+                ],
+                type: 'bar',
+                indexAxis: 'y',
+                labels: ['United States', 'China', 'Russia', 'Great Britain', 'Germany', 'Australia', 'Japan', 'France', 'Netherlands', 'Canada', 'Italy', 'South Korea', 'Hungary'],
+                datasets: [
+                    { label: 'Total Gold', data: [250, 230, 130, 120, 116, 101, 98, 86, 63, 60, 59, 58, 48], backgroundColor: '#eab308', borderRadius: 4 },
+                    { label: 'Total Silver', data: [208, 230, 150, 138, 103, 89, 101, 88, 51, 42, 64, 56, 51], backgroundColor: '#94a3b8', borderRadius: 4 },
+                    { label: 'Total Bronze', data: [277, 236, 149, 143, 117, 90, 109, 86, 36, 56, 75, 76, 53], backgroundColor: '#d97706', borderRadius: 4 }
+                ]
+            },
+            {
+                id: 3,
+                shortTitle: "4. Athlete Trends",
+                title: "Athlete Participation Trends",
+                dashboard: "Dashboard 1 - Olympic Overview",
+                columns: "Year (Games Summary.Csv)",
+                rows: "CNT(athletes.csv)",
+                sourceTable: "athletes.csv + games_summary.csv",
+                chartType: "Line Chart (Alternating Summer/Winter Cycles)",
+                caption: "Global Athlete Turnout Across Summer & Winter Games (1992–2026)",
+                description: "Displays the alternating saw-tooth pattern between larger Summer Olympic cohorts and Winter Olympic cohorts, reaching an all-time high of 8,000 tracked athlete records in 2020.",
+                metrics: [
+                    { label: "All-Time Peak Turnout", value: "8,000 Athletes (2020)" },
+                    { label: "2016 Rio Cycle", value: "7,723 Athletes" },
+                    { label: "1992 Baseline Cycle", value: "7,423 Athletes" }
+                ],
+                type: 'line',
+                labels: ['1992', '1994', '1996', '1998', '2000', '2002', '2004', '2006', '2008', '2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024', '2026'],
+                datasets: [{
+                    label: 'Count of athletes.csv',
+                    data: [7423, 6283, 7064, 5966, 7340, 6271, 7161, 6142, 7453, 6276, 7464, 5838, 7723, 5842, 8000, 5741, 6950, 6276],
+                    borderColor: '#38bdf8',
+                    backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#38bdf8',
+                    pointRadius: 4,
+                    fill: true,
+                    tension: 0.15
+                }]
+            },
+            {
+                id: 4,
+                shortTitle: "5. Top Sports",
+                title: "Top Sports by Medals",
+                dashboard: "Dashboard 2 - Sports & Country Insights",
+                columns: "SUM(Total Medals)",
+                rows: "Sport",
+                sourceTable: "athletes.csv + alltime_country_rankings.csv",
+                chartType: "Horizontal Bar Chart (Green Palette)",
+                caption: "Sporting Disciplines with the Highest Medal Volume",
+                description: "Highlights the top medal-producing sports across the dataset. Skateboarding, Gymnastics, and Fencing lead at 6,025 medals each, followed closely by Taekwondo (6,001), Volleyball (5,984), and Ice Hockey (5,976).",
+                metrics: [
+                    { label: "Top 3 Tied Leaders", value: "Skateboarding, Gymnastics, Fencing (6,025)" },
+                    { label: "Volleyball & Ice Hockey", value: "5,984 & 5,976 Medals" },
+                    { label: "Swimming & Biathlon Mixed Relay", value: "5,891 & 5,880 Medals" }
+                ],
+                type: 'bar',
+                indexAxis: 'y',
+                labels: ['Skateboarding', 'Gymnastics', 'Fencing', 'Taekwondo', 'Volleyball', 'Judo', 'Ice Hockey', 'Weightlifting', 'Badminton', 'Diving', 'Tennis', 'Triathlon', 'Breakdancing', 'Swimming', 'Biathlon Mixed Relay'],
+                datasets: [{
+                    label: 'Total Medals',
+                    data: [6025, 6025, 6025, 6001, 5984, 5980, 5976, 5960, 5947, 5935, 5927, 5920, 5913, 5891, 5880],
+                    backgroundColor: '#22c55e',
+                    borderRadius: 6
+                }]
+            },
+            {
+                id: 5,
+                shortTitle: "6. Host Performance",
+                title: "Host Country Performance",
+                dashboard: "Dashboard 2 - Sports & Country Insights",
+                columns: "CNT(medal_results.csv)",
+                rows: "Host Country",
+                sourceTable: "medal_results.csv",
+                chartType: "Horizontal Bar Chart",
+                caption: "Evaluating Host Nation Frequency & Podium Impact",
+                description: "Measures the count of medal result records achieved during games hosted by each nation. Japan (105), the United States (100), China (98), and Italy (93) lead all host nations.",
+                metrics: [
+                    { label: "#1 Host Country: Japan", value: "105 Medal Result Records" },
+                    { label: "#2 Host Country: United States", value: "100 Medal Result Records" },
+                    { label: "#3 China & #4 Italy", value: "98 & 93 Records" }
+                ],
+                type: 'bar',
+                indexAxis: 'y',
+                labels: ['Japan', 'United States', 'China', 'Italy', 'Brazil', 'United Kingdom', 'Spain', 'Australia', 'Greece', 'France', 'Norway', 'Canada', 'South Korea', 'Russia'],
+                datasets: [{
+                    label: 'Count of medal_results.csv',
+                    data: [105, 100, 98, 93, 58, 56, 56, 55, 54, 52, 47, 47, 44, 44],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 6
+                }]
+            },
+            {
+                id: 6,
+                shortTitle: "7. Medal Efficiency",
+                title: "Medal Efficiency by Country",
+                dashboard: "Dashboard 2 - Sports & Country Insights",
+                columns: "SUM(Medal Efficiency Pct)",
+                rows: "Country (Medal Results.Csv)",
+                sourceTable: "medal_results.csv",
+                chartType: "Horizontal Bar Chart (Coral Red Palette)",
+                caption: "National Podium Conversion & Efficiency Rankings",
+                description: "Evaluates cumulative Medal Efficiency Percentage across participating nations, spotlighting countries that maximize medal returns per athlete sent.",
+                metrics: [
+                    { label: "#1 Efficiency Leader: Iran", value: "1,032.1 Efficiency Pct" },
+                    { label: "#2 Latvia & #3 Poland", value: "1,012.5 & 986.3 Pct" },
+                    { label: "#4 Philippines & #5 Morocco", value: "979.0 & 973.3 Pct" }
+                ],
+                type: 'bar',
+                indexAxis: 'y',
+                labels: ['Iran', 'Latvia', 'Poland', 'Philippines', 'Morocco', 'Turkey', 'Finland', 'Austria', 'Mexico', 'Czech Republic', 'Croatia', 'Bahrain', 'Estonia', 'South Africa'],
+                datasets: [{
+                    label: 'SUM(Medal Efficiency Pct)',
+                    data: [1032.1, 1012.5, 986.3, 979.0, 973.3, 958.0, 945.3, 891.8, 883.8, 791.8, 758.5, 758.2, 745.0, 737.2],
+                    backgroundColor: '#f87171',
+                    borderRadius: 6
+                }]
+            },
+            {
+                id: 7,
+                shortTitle: "8. Sports by Gold",
+                title: "Top Sports by Gold Medals",
+                dashboard: "Dashboard 2 - Sports & Country Insights",
+                columns: "SUM(Total Gold)",
+                rows: "Sport",
+                sourceTable: "alltime_country_rankings.csv + athletes.csv",
+                chartType: "Horizontal Bar Chart (Metallic Grey/Gold)",
+                caption: "Elite Gold Medal Volume Across Olympic Disciplines",
+                description: "Isolates Gold medal counts across sports. Skateboarding, Gymnastics, and Fencing lead with 1,959 Golds each, followed by Judo (1,950), Weightlifting (1,945), and Volleyball (1,943).",
+                metrics: [
+                    { label: "Top 3 Gold Sports", value: "Skateboarding, Gymnastics, Fencing (1,959)" },
+                    { label: "Weightlifting & Volleyball", value: "1,945 & 1,943 Golds" },
+                    { label: "Tennis & Badminton", value: "1,930 & 1,928 Golds" }
+                ],
+                type: 'bar',
+                indexAxis: 'y',
+                labels: ['Skateboarding', 'Gymnastics', 'Fencing', 'Judo', 'Weightlifting', 'Taekwondo', 'Volleyball', 'Ice Hockey', 'Tennis', 'Diving', 'Badminton', 'Triathlon', 'Breakdancing', 'Swimming'],
+                datasets: [{
+                    label: 'SUM(Total Gold)',
+                    data: [1959, 1959, 1959, 1950, 1945, 1944, 1943, 1936, 1930, 1929, 1928, 1925, 1923, 1914],
+                    backgroundColor: '#eab308',
+                    borderRadius: 6
+                }]
+            }
+        ];
+
+        let currentSheetIndex = 0;
+        let chartInstance = null;
+        let isSortedAscending = false;
+        let currentDataLimit = 'all';
+
+        function renderSheetTabs() {
+            const container = document.getElementById('sheetTabsGrid');
+            container.innerHTML = WORKSHEETS.map((sheet, idx) => `
+                <button onclick="selectWorksheet(${idx})"
+                        id="sheet-tab-${idx}"
+                        class="p-3 rounded-2xl card-glass border border-slate-800 text-left transition-all hover:border-gold-400/60 ${idx === currentSheetIndex ? 'active-sheet-card' : ''}">
+                    <div class="text-[10px] font-bold text-gold-400 uppercase">Sheet 0${idx + 1}</div>
+                    <div class="text-xs font-bold text-white mt-1 truncate">${sheet.shortTitle.split('. ')[1]}</div>
+                </button>
+            `).join('');
+        }
+
+        function selectWorksheet(index) {
+            currentSheetIndex = index;
+            isSortedAscending = false;
+            currentDataLimit = 'all';
+            const limitSelect = document.getElementById('limitFilterSelect');
+            if (limitSelect) limitSelect.value = 'all';
+
+            const sheet = WORKSHEETS[index];
+
+            document.querySelectorAll('[id^="sheet-tab-"]').forEach((el, idx) => {
+                if (idx === index) el.classList.add('active-sheet-card');
+                else el.classList.remove('active-sheet-card');
+            });
+
+            document.getElementById('storyStepBadge').textContent = `Story Point ${index + 1} / 8`;
+            document.getElementById('activeSheetBadge').textContent = `Sheet 0${index + 1}`;
+            document.getElementById('activeSheetDashboardTag').textContent = `• Included in ${sheet.dashboard}`;
+            document.getElementById('activeSheetTitle').textContent = sheet.title;
+            document.getElementById('shelfColumns').textContent = sheet.columns;
+            document.getElementById('shelfRows').textContent = sheet.rows;
+            document.getElementById('storyCaptionTitle').textContent = sheet.caption;
+            document.getElementById('storyDescription').textContent = sheet.description;
+            document.getElementById('sheetSourceTable').textContent = sheet.sourceTable;
+            document.getElementById('sheetChartType').textContent = sheet.chartType;
+
+            document.getElementById('sheetMetricsList').innerHTML = sheet.metrics.map(m => `
+                <div class="flex items-center justify-between py-1.5 border-b border-slate-800/80 last:border-0">
+                    <span class="text-slate-400">${m.label}:</span>
+                    <span class="text-gold-400 font-bold">${m.value}</span>
+                </div>
+            `).join('');
+
+            drawWorksheetChart(sheet);
+        }
+
+        function drawWorksheetChart(sheet) {
+            const ctx = document.getElementById('worksheetChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            let labelsCopy = [...sheet.labels];
+            let datasetsCopy = sheet.datasets.map(ds => ({ ...ds, data: [...ds.data] }));
+
+            if (currentDataLimit !== 'all') {
+                const limit = parseInt(currentDataLimit, 10);
+                labelsCopy = labelsCopy.slice(0, limit);
+                datasetsCopy.forEach(ds => {
+                    ds.data = ds.data.slice(0, limit);
+                });
+            }
+
+            if (isSortedAscending) {
+                labelsCopy.reverse();
+                datasetsCopy.forEach(ds => ds.data.reverse());
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: sheet.type,
+                data: {
+                    labels: labelsCopy,
+                    datasets: datasetsCopy
+                },
+                options: {
+                    indexAxis: sheet.indexAxis || 'x',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#cbd5e1', font: { family: 'Inter', size: 12 } }
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#facc15',
+                            bodyColor: '#f8fafc',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94a3b8', font: { size: 11 } },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        },
+                        y: {
+                            ticks: { color: '#e2e8f0', font: { size: 11 } },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function changeDataLimit(limitVal) {
+            currentDataLimit = limitVal;
+            drawWorksheetChart(WORKSHEETS[currentSheetIndex]);
+        }
+
+        function toggleChartSort() {
+            isSortedAscending = !isSortedAscending;
+            drawWorksheetChart(WORKSHEETS[currentSheetIndex]);
+        }
+
+        function nextWorksheet() {
+            const next = (currentSheetIndex + 1) % WORKSHEETS.length;
+            selectWorksheet(next);
+        }
+
+        function prevWorksheet() {
+            const prev = (currentSheetIndex - 1 + WORKSHEETS.length) % WORKSHEETS.length;
+            selectWorksheet(prev);
+        }
+
+        // ============================================================================
+        // 4. INTERACTIVE DATA MODEL & SCHEMA INSPECTOR
+        // ============================================================================
+        const TABLE_SCHEMAS = {
+            rankings: {
+                name: "alltime_country_rankings.csv",
+                desc: "Aggregated country-level standings across all Olympic games including Gold, Silver, Bronze totals, overall rank, and average efficiency.",
+                relTitle: "Relationship: alltime_country_rankings.csv — medal_results.csv",
+                relExplanation: "Connects aggregated national rankings to event-level medal results using Country = Country.",
+                pills: ["Country = Country (Medal Results.Csv)"],
+                fields: [
+                    { name: "Country", type: "Dimension (Geo)" },
+                    { name: "Noc Code", type: "Dimension (String)" },
+                    { name: "Total Medals", type: "Measure (#)" },
+                    { name: "Total Gold / Silver / Bronze", type: "Measure (#)" },
+                    { name: "Overall Rank", type: "Measure (#)" },
+                    { name: "Avg Efficiency Pct", type: "Measure (#)" }
+                ]
+            },
+            medals: {
+                name: "medal_results.csv",
+                desc: "Central fact table containing event-level medal breakdowns by Year, Season, Host City, Host Country, and Medal Efficiency Pct.",
+                relTitle: "Central Hub: medal_results.csv connects all 3 companion tables",
+                relExplanation: "Links to rankings via Country, to athletes via Noc Code, and to games_summary via composite keys Year & Season.",
+                pills: ["Country = Country", "Noc Code = Noc Code", "Year = Year & Season = Season"],
+                fields: [
+                    { name: "Year", type: "Dimension (#)" },
+                    { name: "Season", type: "Dimension (String)" },
+                    { name: "Host Country / Host City", type: "Dimension (Geo)" },
+                    { name: "Country (Medal Results.Csv)", type: "Dimension (Geo)" },
+                    { name: "Total Medals (Medal Results.Csv)", type: "Measure (#)" },
+                    { name: "Medal Efficiency Pct", type: "Measure (#)" }
+                ]
+            },
+            athletes: {
+                name: "athletes.csv",
+                desc: "Participant-level dataset containing athlete demographics, sport categories, training hours per week, and individual medal counts.",
+                relTitle: "Relationship: medal_results.csv — athletes.csv",
+                relExplanation: "Matches national Olympic committees between medal results and participating athletes.",
+                pills: ["Noc Code = Noc Code (Athletes.Csv)"],
+                fields: [
+                    { name: "Athlete Id / Name", type: "Dimension (String)" },
+                    { name: "Sport / Sport Category", type: "Dimension (String)" },
+                    { name: "Noc Code (Athletes.Csv)", type: "Dimension (String)" },
+                    { name: "Gender / Age At Peak", type: "Dimension / Measure" },
+                    { name: "athletes.csv (Count)", type: "Measure (CNT)" }
+                ]
+            },
+            games: {
+                name: "games_summary.csv",
+                desc: "Historical summary of each Olympic game cycle by Year and Season, tracking participating nations and total athletes.",
+                relTitle: "Composite Relationship: medal_results.csv — games_summary.csv",
+                relExplanation: "Validated multi-field link matching both Year = Year AND Season = Season for accurate Summer/Winter filtering.",
+                pills: ["Year = Year (Games Summary.Csv)", "Season = Season (Games Summary.Csv)"],
+                fields: [
+                    { name: "Year (Games Summary.Csv)", type: "Dimension (#)" },
+                    { name: "Season (Games Summary.Csv)", type: "Dimension (String)" },
+                    { name: "Participating Nations", type: "Measure (#)" },
+                    { name: "Total Athletes", type: "Measure (#)" },
+                    { name: "Total Medals Awarded", type: "Measure (#)" }
+                ]
+            }
+        };
+
+        function inspectTable(key) {
+            const info = TABLE_SCHEMAS[key];
+            if (!info) return;
+
+            document.getElementById('schemaTableName').textContent = info.name;
+            document.getElementById('schemaTableDesc').textContent = info.desc;
+            document.getElementById('relTitle').textContent = info.relTitle;
+            document.getElementById('relExplanation').textContent = info.relExplanation;
+
+            document.getElementById('relPills').innerHTML = info.pills.map(p => `
+                <span class="px-3 py-1 rounded-lg bg-slate-800 text-gold-400 font-mono text-xs border border-slate-700">${p}</span>
+            `).join('');
+
+            document.getElementById('schemaFieldsList').innerHTML = info.fields.map(f => `
+                <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-navy-950/90 border border-slate-800 text-xs">
+                    <span class="font-mono text-white font-medium">${f.name}</span>
+                    <span class="text-[11px] text-gold-400">${f.type}</span>
+                </div>
+            `).join('');
+        }
+
+        // Initialize all interactive dashboards and components immediately on load
+        window.onload = function () {
+            initDashboard1Charts();
+            renderSheetTabs();
+            selectWorksheet(0);
+            inspectTable('games');
+        };
+    </script>
+</body>
+</html>
